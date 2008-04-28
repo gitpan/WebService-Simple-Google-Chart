@@ -1,5 +1,5 @@
 --- 
-abstract: Get Google Chart URL and File
+abstract: Get Google Chart URL and image file
 author: Yusuke Wada <yusuke@kamawada.com>
 build_requires: 
   Pod::Coverage: 0
@@ -17,5 +17,5 @@ no_index:
     - inc
     - t
 requires: 
-  WebService::Simple: 0
-version: 0.01
+  WebService::Simple: 0.10
+version: 0.02

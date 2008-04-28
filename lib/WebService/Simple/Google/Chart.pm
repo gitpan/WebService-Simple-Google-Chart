@@ -2,7 +2,7 @@ package WebService::Simple::Google::Chart;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use base qw(WebService::Simple);
 __PACKAGE__->config(
@@ -11,62 +11,55 @@ __PACKAGE__->config(
 );
 
 sub get_url {
-    my ( $self, $param ) = @_;
-    my ( @label, @value, $data, $total_count );
-    $data        = $param->{data};
-    $total_count = 0;
-    map { $total_count += $data->{$_} } keys %$data;
-    foreach my $key ( keys %{ $param->{data} } ) {
-        push( @label, $key );
-        my $percent = int( $param->{data}->{$key} / $total_count * 100 + 0.5 );
-        push( @value, $percent );
-    }
-    $self->{request_param}->{chs} = $param->{size};
-    $self->{request_param}->{cht} = $param->{type};
-    $self->{request_param}->{chl} = join( "|", @label );
-    $self->{request_param}->{chd} = "t:" . join( ",", @value );
+    my ( $self, $param, $data ) = @_;
+    $self->{request_param} = $param;
+    $self->_set_data_param($data);
     return $self->request_url( $self->{request_param} );
 }
 
 sub render_to_file {
-    my $self  = shift;
-    my $param = shift;
-    my $filename;
-    if ( ref $param eq 'Hash' ) {
-        $self->{request_param} = $param;
+    my ($self,$filename,$param,$data)  = @_;
+    if($param){
+	$self->{request_param} = $param;
+	$self->_set_data_param($data);
     }
-    else {
-        $filename = $param;
-    }
-    $self->SUPER::get( $self->{request_param}, ":content_file" => $filename );
+    $self->SUPER::get( $self->{request_param} , ":content_file" => $filename );
 }
 
-sub _total_value {
-    my ( $self, $data ) = @_;
-    my @values;
-    map { push( @values, $data->{$_} ) } keys %$data;
-    @values = sort { $b <=> int $a } @values;
-    return $values[0];
+sub _set_data_param {
+    my ($self, $data) = @_;
+    my ( @label, @value, $total_count );
+    $total_count = 0;
+    map { $total_count += $data->{$_} } keys %$data;
+    foreach my $key ( keys %$data ) {
+        push( @label, $key );
+        my $percent = int( $data->{$key} / $total_count * 100 + 0.5 );
+        push( @value, $percent );
+    }
+    my $data_param = {};
+    $self->{request_param}->{chl} = join( "|", @label );
+    $self->{request_param}->{chd} = "t:" . join( ",", @value );
 }
 
 1;
 
+__END__
+
 =head1 NAME
 
-WebService::Simple::Google::Chart - Get Google Chart URL and File
+WebService::Simple::Google::Chart - Get Google Chart URL and image file
 
 =head1 SYNOPSIS
 
   use WebService::Simple::Google::Chart;
 
   my $chart = WebService::Simple::Google::Chart->new;
-  my $data  = { foo => 200, bar => 130, hoge => 70 };
   my $url   = $chart->get_url(
       {
           size => "250x100",
           type => "p3",
-          data => $data,
-      }
+      },
+      { foo => 200, bar => 130, hoge => 70 },
   );
   print $url;
   $chart->render_to_file("foo.png");
@@ -91,4 +84,4 @@ it and/or modify it under the same terms as Perl itself.
 
 =cut
 
-1;
+

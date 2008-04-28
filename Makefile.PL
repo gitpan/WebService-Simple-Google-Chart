@@ -3,7 +3,7 @@ use inc::Module::Install;
 name 'WebService-Simple-Google-Chart';
 all_from 'lib/WebService/Simple/Google/Chart.pm';
 
-requires 'WebService::Simple';
+requires 'WebService::Simple' => "0.10";
 build_requires 'Test::More';
 build_requires 'Test::Pod';
 build_requires 'Pod::Coverage';
