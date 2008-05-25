@@ -2,7 +2,7 @@ package WebService::Simple::Google::Chart;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use base qw(WebService::Simple);
 __PACKAGE__->config(
@@ -14,14 +14,14 @@ sub get_url {
     my ( $self, $param, $data ) = @_;
     $self->{request_param} = $param;
     $self->_set_data_param($data);
-    return $self->request_url( $self->{request_param} );
+    return $self->request_url( "", %{$self->{request_param}} );
 }
 
 sub render_to_file {
     my ($self,$filename,$param,$data)  = @_;
     if($param){
-	$self->{request_param} = $param;
-	$self->_set_data_param($data);
+        $self->{request_param} = $param;
+        $self->_set_data_param($data);
     }
     $self->SUPER::get( $self->{request_param} , ":content_file" => $filename );
 }
@@ -56,8 +56,8 @@ WebService::Simple::Google::Chart - Get Google Chart URL and image file
   my $chart = WebService::Simple::Google::Chart->new;
   my $url   = $chart->get_url(
       {
-          size => "250x100",
-          type => "p3",
+          chs => "250x100",
+          cht => "p3",
       },
       { foo => 200, bar => 130, hoge => 70 },
   );
