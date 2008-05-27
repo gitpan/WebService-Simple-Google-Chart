@@ -17,5 +17,5 @@ no_index:
     - inc
     - t
 requires: 
-  WebService::Simple: 0.10
-version: 0.03
+  WebService::Simple: 0.12
+version: 0.04
