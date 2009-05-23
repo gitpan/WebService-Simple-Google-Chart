@@ -2,7 +2,7 @@ package WebService::Simple::Google::Chart;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use base qw(WebService::Simple);
 __PACKAGE__->config(
@@ -14,16 +14,16 @@ sub get_url {
     my ( $self, $param, $data ) = @_;
     $self->{request_param} = $param;
     $self->_set_data_param($data);
-    return $self->request_url( "", %{$self->{request_param}} );
+    return $self->request_url( ( params => $self->{request_param}, url => $self->{base_url} ) );
 }
 
 sub render_to_file {
-    my ($self,$filename,$param,$data)  = @_;
-    if($param){
+    my ( $self, $filename, $param, $data ) = @_;
+    if ($param) {
         $self->{request_param} = $param;
         $self->_set_data_param($data);
     }
-    $self->SUPER::get( $self->{request_param} , ":content_file" => $filename );
+    $self->SUPER::get( $self->{request_param}, ":content_file" => $filename );
 }
 
 sub _set_data_param {
